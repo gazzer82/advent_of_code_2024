@@ -23,7 +23,14 @@ defmodule Aoc2024.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-      {:aoc, "~> 0.13"}
+      {:aoc, "~> 0.13"},
+      {:memoized, "~> 0.1.0"}
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: ["aoc.test": :test]
     ]
   end
 end
