@@ -32,7 +32,7 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
   end
 
   def do_calculation(total, [], current) do
-    [current == total]
+    current == total
   end
 
   def do_calculation(total, [option | rest], current) do
@@ -41,25 +41,26 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
 
     cond do
       multi_valid and add_valid ->
-        [
-          do_calculation(total, rest, current * option),
+        do_calculation(total, rest, current * option) ||
           do_calculation(total, rest, current + option)
-        ]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
+
+      # |> List.flatten()
+      # |> Enum.filter(& &1)
+      # |> List.first(false)
 
       multi_valid ->
-        [do_calculation(total, rest, current * option)]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
+        do_calculation(total, rest, current * option)
+
+      # |> List.flatten()
+      # |> Enum.filter(& &1)
+      # |> List.first(false)
 
       add_valid ->
-        [do_calculation(total, rest, current + option)]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
+        do_calculation(total, rest, current + option)
+
+      # |> List.flatten()
+      # |> Enum.filter(& &1)
+      # |> List.first(false)
 
       true ->
         false
@@ -128,7 +129,7 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
   end
 
   def do_calculation_part_2(total, [], current) do
-    [current == total]
+    current == total
   end
 
   def do_calculation_part_2(total, [option | rest], current) do
@@ -138,59 +139,30 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
 
     cond do
       multi_valid and add_valid and concat_valid ->
-        [
-          do_calculation_part_2(total, rest, current * option),
-          do_calculation_part_2(total, rest, current + option),
+        do_calculation_part_2(total, rest, current * option) ||
+          do_calculation_part_2(total, rest, current + option) ||
           do_calculation_part_2(total, rest, concat_value)
-        ]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
 
       multi_valid and concat_valid ->
-        [
-          do_calculation_part_2(total, rest, current * option),
+        do_calculation_part_2(total, rest, current * option) ||
           do_calculation_part_2(total, rest, concat_value)
-        ]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
 
       multi_valid and add_valid ->
-        [
-          do_calculation_part_2(total, rest, current * option),
+        do_calculation_part_2(total, rest, current * option) ||
           do_calculation_part_2(total, rest, current + option)
-        ]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
 
       add_valid and concat_valid ->
-        [
-          do_calculation_part_2(total, rest, current + option),
+        do_calculation_part_2(total, rest, current + option) ||
           do_calculation_part_2(total, rest, concat_value)
-        ]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
 
       multi_valid ->
-        [do_calculation_part_2(total, rest, current * option)]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
+        do_calculation_part_2(total, rest, current * option)
 
       add_valid ->
-        [do_calculation_part_2(total, rest, current + option)]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
+        do_calculation_part_2(total, rest, current + option)
 
       concat_valid ->
-        [do_calculation_part_2(total, rest, concat_value)]
-        |> List.flatten()
-        |> Enum.filter(& &1)
-        |> List.first(false)
+        do_calculation_part_2(total, rest, concat_value)
 
       true ->
         false
