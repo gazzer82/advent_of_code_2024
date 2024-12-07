@@ -12,91 +12,19 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
   end
 
   def part_one(problem) do
-    problem
-    |> split_into_chunks()
-    |> Task.async_stream(&do_calculations/1)
-    |> merge_results_stream()
-    |> Enum.filter(fn {_total, valid} ->
-      valid
-    end)
-    |> Enum.reduce(0, fn {total, _}, acc ->
-      acc + total
-    end)
-  end
-
-  def do_calculations(problem) do
-    problem
-    |> Enum.map(fn {total, [current | rest]} ->
-      {total, do_calculation(total, rest, current)}
-    end)
-  end
-
-  def do_calculation(total, [], current) do
-    current == total
-  end
-
-  def do_calculation(total, [option | rest], current) do
-    multi_valid = check_multi_calculation(total, option, current)
-    add_valid = check_plus_calculation(total, option, current)
-
-    cond do
-      multi_valid and add_valid ->
-        do_calculation(total, rest, current * option) ||
-          do_calculation(total, rest, current + option)
-
-      # |> List.flatten()
-      # |> Enum.filter(& &1)
-      # |> List.first(false)
-
-      multi_valid ->
-        do_calculation(total, rest, current * option)
-
-      # |> List.flatten()
-      # |> Enum.filter(& &1)
-      # |> List.first(false)
-
-      add_valid ->
-        do_calculation(total, rest, current + option)
-
-      # |> List.flatten()
-      # |> Enum.filter(& &1)
-      # |> List.first(false)
-
-      true ->
-        false
-    end
-  end
-
-  def check_multi_calculation(total, option, current)
-      when option * current <= total do
-    true
-  end
-
-  def check_multi_calculation(_total, _options, _current), do: false
-
-  def check_plus_calculation(total, option, current)
-      when option + current <= total do
-    true
-  end
-
-  def check_plus_calculation(_total, _options, _current), do: false
-
-  def check_concat_calculation(total, option, current) do
-    concat_number = current * trunc(:math.pow(10, trunc(:math.log10(option)) + 1)) + option
-
-    if concat_number <= total do
-      {true, concat_number}
-    else
-      {false, 0}
-    end
+    do_work(problem, :part_one)
   end
 
   def part_two(problem) do
+    do_work(problem, :part_two)
+  end
+
+  def do_work(problem, part) do
     problem
     |> split_into_chunks()
     # |> do_calculations_part_2()
     |> Task.async_stream(fn options ->
-      do_calculations_part_2(options)
+      do_calculations(options, part)
     end)
     |> merge_results_stream()
     |> Enum.filter(fn {_total, valid} ->
@@ -107,11 +35,38 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
     end)
   end
 
-  def do_calculations_part_2(problem) do
+  def do_calculations(problem, part) do
     problem
     |> Enum.map(fn {total, [current | rest]} ->
-      {total, do_calculation_part_2(total, rest, current)}
+      {total, do_calculation(total, rest, current, part)}
     end)
+  end
+
+  def do_calculation(total, _, current, _part) when current > total do
+    false
+  end
+
+  def do_calculation(total, [], current, _part) do
+    current == total
+  end
+
+  def do_calculation(total, [option | rest], current, part) do
+    case part do
+      :part_one ->
+        do_calculation(total, rest, current * option, part) ||
+          do_calculation(total, rest, current + option, part)
+
+      :part_two ->
+        concat_value = get_concat_calculation(option, current)
+
+        do_calculation(total, rest, current * option, part) ||
+          do_calculation(total, rest, current + option, part) ||
+          do_calculation(total, rest, concat_value, part)
+    end
+  end
+
+  def get_concat_calculation(option, current) do
+    current * trunc(:math.pow(10, trunc(:math.log10(option)) + 1)) + option
   end
 
   defp split_into_chunks(options) do
@@ -126,46 +81,5 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
     Enum.reduce(results_stream, [], fn {:ok, worker_result}, acc ->
       acc ++ worker_result
     end)
-  end
-
-  def do_calculation_part_2(total, [], current) do
-    current == total
-  end
-
-  def do_calculation_part_2(total, [option | rest], current) do
-    multi_valid = check_multi_calculation(total, option, current)
-    add_valid = check_plus_calculation(total, option, current)
-    {concat_valid, concat_value} = check_concat_calculation(total, option, current)
-
-    cond do
-      multi_valid and add_valid and concat_valid ->
-        do_calculation_part_2(total, rest, current * option) ||
-          do_calculation_part_2(total, rest, current + option) ||
-          do_calculation_part_2(total, rest, concat_value)
-
-      multi_valid and concat_valid ->
-        do_calculation_part_2(total, rest, current * option) ||
-          do_calculation_part_2(total, rest, concat_value)
-
-      multi_valid and add_valid ->
-        do_calculation_part_2(total, rest, current * option) ||
-          do_calculation_part_2(total, rest, current + option)
-
-      add_valid and concat_valid ->
-        do_calculation_part_2(total, rest, current + option) ||
-          do_calculation_part_2(total, rest, concat_value)
-
-      multi_valid ->
-        do_calculation_part_2(total, rest, current * option)
-
-      add_valid ->
-        do_calculation_part_2(total, rest, current + option)
-
-      concat_valid ->
-        do_calculation_part_2(total, rest, concat_value)
-
-      true ->
-        false
-    end
   end
 end
