@@ -22,7 +22,6 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
   def do_work(problem, part) do
     problem
     |> split_into_chunks()
-    # |> do_calculations_part_2()
     |> Task.async_stream(fn options ->
       do_calculations(options, part)
     end)
