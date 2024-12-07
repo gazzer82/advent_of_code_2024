@@ -28,9 +28,9 @@ defmodule Aoc2024.Solutions.Y24.Day07Test do
     assert 3749 == solve(input, :part_one)
   end
 
-  # 190
-  # 3267
-  # 292
+  # 3267: 81 40 27
+  # 292: 11 6 16 20
+  # 190: 10 19
 
   @part_one_solution 12_553_187_650_171
 
@@ -54,9 +54,11 @@ defmodule Aoc2024.Solutions.Y24.Day07Test do
     assert 11387 == solve(input, :part_two)
   end
 
-  # @part_two_solution CHANGE_ME
-  #
-  # test "part two solution" do
-  #   assert {:ok, @part_two_solution} == AoC.run(2024, 7, :part_two)
-  # end
+  # 192: 17 8 14
+
+  @part_two_solution 96_779_702_119_491
+
+  test "part two solution" do
+    assert {:ok, @part_two_solution} == AoC.run(2024, 7, :part_two)
+  end
 end
