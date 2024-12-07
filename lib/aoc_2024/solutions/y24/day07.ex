@@ -13,7 +13,9 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
 
   def part_one(problem) do
     problem
-    |> do_calculations()
+    |> split_into_chunks()
+    |> Task.async_stream(&do_calculations/1)
+    |> merge_results_stream()
     |> Enum.filter(fn {_total, valid} ->
       valid
     end)
@@ -90,7 +92,12 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
 
   def part_two(problem) do
     problem
-    |> do_calculations_part_2()
+    |> split_into_chunks()
+    # |> do_calculations_part_2()
+    |> Task.async_stream(fn options ->
+      do_calculations_part_2(options)
+    end)
+    |> merge_results_stream()
     |> Enum.filter(fn {_total, valid} ->
       valid
     end)
@@ -103,6 +110,20 @@ defmodule Aoc2024.Solutions.Y24.Day07 do
     problem
     |> Enum.map(fn {total, [current | rest]} ->
       {total, do_calculation_part_2(total, rest, current)}
+    end)
+  end
+
+  defp split_into_chunks(options) do
+    workers = :erlang.system_info(:schedulers_online)
+    options_count = Enum.count(options)
+    options_per_chunk = :erlang.ceil(options_count / workers)
+
+    Enum.chunk_every(options, options_per_chunk)
+  end
+
+  defp merge_results_stream(results_stream) do
+    Enum.reduce(results_stream, [], fn {:ok, worker_result}, acc ->
+      acc ++ worker_result
     end)
   end
 
