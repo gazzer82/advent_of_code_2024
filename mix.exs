@@ -25,7 +25,10 @@ defmodule Aoc2024.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:aoc, "~> 0.13"},
       {:memoized, "~> 0.1.0"},
-      {:nimble_parsec, "~> 1.4"}
+      {:nimble_parsec, "~> 1.4"},
+      {:arrays, "~> 2.1"},
+      {:fun_land, "~> 0.10.0"},
+      {:arrays_aja, "~> 0.2.0"}
     ]
   end
 
