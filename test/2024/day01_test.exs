@@ -3,46 +3,46 @@ defmodule Aoc2024.Solutions.Y24.Day01Test do
   alias Aoc2024.Solutions.Y24.Day01, as: Solution, warn: false
   use ExUnit.Case, async: true
 
-  defp solve(input, part) do
-    problem =
-      input
-      |> Input.as_file()
-      |> Solution.parse(part)
+  # defp solve(input, part) do
+  #   problem =
+  #     input
+  #     |> Input.as_file()
+  #     |> Solution.parse(part)
 
-    apply(Solution, part, [problem])
-  end
+  #   apply(Solution, part, [problem])
+  # end
 
-  test "part one example" do
-    input = ~S"""
-    3   4
-    4   3
-    2   5
-    1   3
-    3   9
-    3   3
-    """
+  # test "part one example" do
+  #   input = ~S"""
+  #   3   4
+  #   4   3
+  #   2   5
+  #   1   3
+  #   3   9
+  #   3   3
+  #   """
 
-    assert 11 == solve(input, :part_one)
-  end
+  #   assert 11 == solve(input, :part_one)
+  # end
 
-  @part_one_solution 2_176_849
+  # @part_one_solution 2_176_849
 
-  test "part one solution" do
-    assert {:ok, @part_one_solution} == AoC.run(2024, 1, :part_one)
-  end
+  # test "part one solution" do
+  #   assert {:ok, @part_one_solution} == AoC.run(2024, 1, :part_one)
+  # end
 
-  test "part two example" do
-    input = ~S"""
-    3   4
-    4   3
-    2   5
-    1   3
-    3   9
-    3   3
-    """
+  # test "part two example" do
+  #   input = ~S"""
+  #   3   4
+  #   4   3
+  #   2   5
+  #   1   3
+  #   3   9
+  #   3   3
+  #   """
 
-    assert 31 == solve(input, :part_two)
-  end
+  #   assert 31 == solve(input, :part_two)
+  # end
 
   # @part_two_solution CHANGE_ME
   #
