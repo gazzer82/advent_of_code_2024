@@ -18,16 +18,12 @@ defmodule Aoc2024.Solutions.Y24.Day10 do
 
   def find_trails(ths, matrix) do
     Enum.map(ths, fn th ->
-      find_trail(th, matrix, []) |> Enum.uniq() |> Enum.count()
+      find_trail(th, matrix, MapSet.new()) |> Enum.count()
     end)
     |> Enum.sum()
   end
 
-  # def find_trail(th, matrix, acc) do
-  #   acc ++ fetch_routes(th, matrix)
-  # end
-
-  def find_trail({_x, _y, val} = head, _matrix, _acc) when val == 9, do: [head]
+  def find_trail({_x, _y, val} = head, _matrix, _acc) when val == 9, do: MapSet.new([head])
 
   def find_trail(th, matrix, acc) do
     routes = fetch_routes(th, matrix)
@@ -37,11 +33,14 @@ defmodule Aoc2024.Solutions.Y24.Day10 do
         acc
 
       _ ->
-        (acc ++
-           Enum.map(routes, fn th ->
-             find_trail(th, matrix, acc)
-           end))
-        |> List.flatten()
+        MapSet.union(
+          acc,
+          MapSet.new(
+            Enum.flat_map(routes, fn th ->
+              find_trail(th, matrix, acc)
+            end)
+          )
+        )
     end
   end
 
@@ -113,8 +112,25 @@ defmodule Aoc2024.Solutions.Y24.Day10 do
 
   def find_trails_part_2(ths, matrix) do
     Enum.map(ths, fn th ->
-      find_trail(th, matrix, []) |> Enum.count()
+      find_trail_2(th, matrix, []) |> Enum.count()
     end)
     |> Enum.sum()
+  end
+
+  def find_trail_2({_x, _y, val} = head, _matrix, _acc) when val == 9, do: [head]
+
+  def find_trail_2(th, matrix, acc) do
+    routes = fetch_routes(th, matrix)
+
+    case routes do
+      [] ->
+        acc
+
+      _ ->
+        acc ++
+          Enum.flat_map(routes, fn th ->
+            find_trail_2(th, matrix, acc)
+          end)
+    end
   end
 end

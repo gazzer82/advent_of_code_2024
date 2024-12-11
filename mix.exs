@@ -14,7 +14,7 @@ defmodule Aoc2024.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :wx, :observer]
+      extra_applications: [:logger, :wx, :observer, :memoize]
     ]
   end
 
@@ -28,7 +28,8 @@ defmodule Aoc2024.MixProject do
       {:nimble_parsec, "~> 1.4"},
       {:arrays, "~> 2.1"},
       {:fun_land, "~> 0.10.0"},
-      {:arrays_aja, "~> 0.2.0"}
+      {:arrays_aja, "~> 0.2.0"},
+      {:memoize, "~> 1.4"}
     ]
   end
 
