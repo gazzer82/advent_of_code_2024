@@ -67,8 +67,6 @@ defmodule Aoc2024.Solutions.Y24.Day11 do
     else
       stone_length = Integer.digits(stone)
       num_digits = length(stone_length)
-      # stone_string = Integer.to_string(stone)
-      # digits = byte_size(stone_string)
 
       case Integer.is_even(num_digits) do
         true ->
