@@ -41,34 +41,22 @@ defmodule Aoc2024.Solutions.Y24.Day11 do
     end
   end
 
-  defmemo rule(stone) do
+  def rule(stone) do
     if stone == 0 do
       1
     else
       stone_string = Integer.to_string(stone)
-      digits = String.length(Integer.to_string(stone))
+      digits = byte_size(stone_string)
 
       case Integer.is_even(digits) do
         true ->
-          String.split_at(stone_string, div(digits, 2))
-          {left, right} = String.split_at(stone_string, div(digits, 2))
-
-          [
-            String.to_integer(left),
-            String.to_integer(right)
-          ]
+          mid = div(digits, 2)
+          <<left::binary-size(mid), right::binary>> = stone_string
+          [String.to_integer(left), String.to_integer(right)]
 
         _ ->
           stone * 2024
       end
     end
-  end
-
-  defmemo split_into_chunks(options) do
-    workers = :erlang.system_info(:schedulers_online)
-    options_count = Enum.count(options)
-    options_per_chunk = :erlang.ceil(options_count / workers)
-
-    Enum.chunk_every(options, options_per_chunk)
   end
 end
