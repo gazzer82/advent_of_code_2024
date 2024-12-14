@@ -88,9 +88,6 @@ defmodule Aoc2024.Solutions.Y24.Day14 do
   @ticks @tick_1 ++ @tick_2
 
   def perform_moves_pt_2(robots, {grid_x, grid_y}, count, acc) do
-    dbg(count)
-    dbg(acc)
-
     robots =
       Enum.map(robots, fn robot ->
         perform_move(robot, {grid_x, grid_y})
@@ -120,7 +117,6 @@ defmodule Aoc2024.Solutions.Y24.Day14 do
   end
 
   def print_coordinates_grid(coordinates, acc) do
-    dbg("Print")
     grid = for _ <- 0..102, do: for(_ <- 0..100, do: ".")
 
     updated_grid =
