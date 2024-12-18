@@ -30,6 +30,7 @@ defmodule Aoc2024.MixProject do
       {:fun_land, "~> 0.10.0"},
       {:arrays_aja, "~> 0.2.0"},
       {:memoize, "~> 1.4"},
+      {:libgraph, "~> 0.16.0"},
       {:benchee_html, "~> 1.0", only: :dev}
     ]
   end
