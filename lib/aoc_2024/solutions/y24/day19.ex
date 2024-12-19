@@ -11,9 +11,23 @@ defmodule Aoc2024.Solutions.Y24.Day19 do
   def part_one({towels, patterns}) do
     towels = Enum.sort_by(towels, &String.length/1, :desc)
 
-    Enum.map(patterns, &match_patterns(towels, &1, towels))
+    Task.async_stream(
+      patterns,
+      fn pattern ->
+        Process.put(:memo, %{})
+        result = match_patterns(towels, pattern, towels)
+        Process.delete(:memo)
+        result
+      end,
+      ordered: false,
+      max_concurrency: System.schedulers_online() * 2
+    )
     |> Enum.filter(& &1)
     |> Enum.count(& &1)
+
+    # Enum.map(patterns, &match_patterns(towels, &1, towels))
+    # |> Enum.filter(& &1)
+    # |> Enum.count(& &1)
   end
 
   def match_patterns(_, "", _towels), do: true
@@ -21,16 +35,28 @@ defmodule Aoc2024.Solutions.Y24.Day19 do
   def match_patterns([], _pattern, _towels), do: false
 
   def match_patterns([towel | rest], pattern, towels) do
-    case String.starts_with?(pattern, towel) do
-      true ->
-        if match_patterns(towels, String.replace(pattern, towel, "", global: false), towels) do
-          true
-        else
-          match_patterns(rest, pattern, towels)
-        end
+    cache_key = {towel, pattern}
 
-      _ ->
-        match_patterns(rest, pattern, towels)
+    case Process.get(:memo) |> Map.get(cache_key) do
+      nil ->
+        result =
+          case String.starts_with?(pattern, towel) do
+            true ->
+              if match_patterns(towels, String.replace(pattern, towel, "", global: false), towels) do
+                true
+              else
+                match_patterns(rest, pattern, towels)
+              end
+
+            _ ->
+              match_patterns(rest, pattern, towels)
+          end
+
+        Process.put(:memo, Map.put(Process.get(:memo), cache_key, result))
+        result
+
+      cached_result ->
+        cached_result
     end
   end
 
