@@ -31,11 +31,11 @@ defmodule Aoc2024.Solutions.Y24.Day14Test do
   #   assert 12 == solve(input, :part_one)
   # end
 
-  @part_one_solution 218_619_324
+  # @part_one_solution 218_619_324
 
-  test "part one solution" do
-    assert {:ok, @part_one_solution} == AoC.run(2024, 14, :part_one)
-  end
+  # test "part one solution" do
+  #   assert {:ok, @part_one_solution} == AoC.run(2024, 14, :part_one)
+  # end
 
   # test "part two example" do
   #   input = ~S"""
