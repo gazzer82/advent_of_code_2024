@@ -5,47 +5,21 @@ defmodule Aoc2024.Solutions.Y24.Day20 do
     Input.read!(input) |> String.split("\n", trim: true)
   end
 
-  def part_one(problem) do
-    matrix =
-      problem
-      |> build_matrix()
+  @delta_limits_part_one -2..2
+  @possible_jumps_part_one for x <- @delta_limits_part_one,
+                               y <- @delta_limits_part_one,
+                               manhattan_distance = abs(x) + abs(y),
+                               manhattan_distance <= 2,
+                               do: {x, y}
 
-    {start, _} = Enum.find(matrix, fn {_, {_, status}} -> status == :start end)
-    {finish, _} = Enum.find(matrix, fn {_, {_, status}} -> status == :finish end)
+  def part_one(input) do
+    grid = build_matrix(input)
+    {origin, target} = locate_endpoints(grid)
 
-    graph = build_graph(matrix)
+    route = Graph.dijkstra(build_graph(grid), origin, target)
+    locations = index_positions(route)
 
-    shortcuts = find_shortcut(matrix)
-
-    dbg(MapSet.size(shortcuts))
-
-    pico =
-      (Graph.dijkstra(graph, start, finish)
-       |> Enum.count()) - 1
-
-    shortcuts
-    |> split_into_chunks()
-    |> Task.async_stream(
-      fn options ->
-        Enum.map(options, fn {x, y} ->
-          updated_graph =
-            get_neighbours({x, y}, matrix)
-            |> Enum.reduce(graph, fn {x_2, y_2}, graph ->
-              Graph.add_edge(graph, Graph.Edge.new({x, y}, {x_2, y_2}))
-            end)
-
-          result =
-            (Graph.dijkstra(updated_graph, start, finish)
-             |> Enum.count()) - 1
-
-          pico - result
-        end)
-      end,
-      timeout: :infinity
-    )
-    |> merge_results_stream()
-    |> Enum.filter(&(&1 >= 100))
-    |> Enum.count()
+    find_valid_jumps(route, locations, @possible_jumps_part_one)
   end
 
   defp split_into_chunks(options) do
@@ -62,46 +36,7 @@ defmodule Aoc2024.Solutions.Y24.Day20 do
     end)
   end
 
-  def find_shortcut(matrix) do
-    Enum.reduce(Map.to_list(matrix), MapSet.new(), fn {_, {{x, y}, status}}, set ->
-      if status == :wall do
-        if check_if_single_wall(x, y, matrix) do
-          MapSet.put(set, {x, y})
-        else
-          set
-        end
-      else
-        set
-      end
-    end)
-  end
-
-  def check_if_single_wall(x, y, matrix) do
-    up = fetch_neighbour({x - 1, y}, matrix)
-    down = fetch_neighbour({x + 1, y}, matrix)
-    left = fetch_neighbour({x, y - 1}, matrix)
-    right = fetch_neighbour({x, y + 1}, matrix)
-
-    options = [:open, :start, :finish]
-
-    if (up in options and down in options) or (left in options and right in options) do
-      true
-    else
-      false
-    end
-  end
-
-  def fetch_neighbour({x, y}, matrix) do
-    case Map.get(matrix, {x, y}) do
-      {_, status} ->
-        status
-
-      _ ->
-        :outside
-    end
-  end
-
-  def build_graph(matrix) do
+  defp build_graph(matrix) do
     Enum.reduce(Map.to_list(matrix), Graph.new(type: :undirected), fn {_, {{x, y}, status}},
                                                                       graph ->
       if status == :open do
@@ -115,7 +50,7 @@ defmodule Aoc2024.Solutions.Y24.Day20 do
     end)
   end
 
-  def get_neighbours({x, y}, matrix) do
+  defp get_neighbours({x, y}, matrix) do
     [
       {x - 1, y},
       {x + 1, y},
@@ -128,14 +63,14 @@ defmodule Aoc2024.Solutions.Y24.Day20 do
     end)
   end
 
-  def build_matrix(grid) do
+  defp build_matrix(grid) do
     Enum.with_index(grid)
     |> Enum.reduce(%{}, fn row, acc ->
       build_matrix_row(row, acc)
     end)
   end
 
-  def build_matrix_row({row, row_index}, acc) do
+  defp build_matrix_row({row, row_index}, acc) do
     row
     |> String.graphemes()
     |> Enum.with_index()
@@ -144,63 +79,65 @@ defmodule Aoc2024.Solutions.Y24.Day20 do
     end)
   end
 
-  def map_char("S"), do: :start
-  def map_char("E"), do: :finish
-  def map_char("."), do: :open
-  def map_char("#"), do: :wall
+  defp map_char("S"), do: :start
+  defp map_char("E"), do: :finish
+  defp map_char("."), do: :open
+  defp map_char("#"), do: :wall
 
-  @shortcut_range -20..20
-  @shortcut_options for row <- @shortcut_range,
-                        col <- @shortcut_range,
-                        abs(row) + abs(col) <= 20,
-                        do: {row, col}
+  @delta_limits_part_two -20..20
+  @possible_jumps_part_two for x <- @delta_limits_part_two,
+                               y <- @delta_limits_part_two,
+                               manhattan_distance = abs(x) + abs(y),
+                               manhattan_distance <= 20,
+                               do: {x, y}
 
-  def part_two(problem) do
-    matrix = build_matrix(problem)
-    {start, finish} = find_special_points(matrix)
+  def part_two(input) do
+    grid = build_matrix(input)
+    {origin, target} = locate_endpoints(grid)
 
-    path = Graph.dijkstra(build_graph(matrix), start, finish)
-    position_map = build_position_map(path)
+    route = Graph.dijkstra(build_graph(grid), origin, target)
+    locations = index_positions(route)
 
-    calculate_valid_shortcuts(path, position_map)
+    find_valid_jumps(route, locations, @possible_jumps_part_two)
   end
 
-  defp find_special_points(matrix) do
-    {start, _} = Enum.find(matrix, fn {_, {_, status}} -> status == :start end)
-    {finish, _} = Enum.find(matrix, fn {_, {_, status}} -> status == :finish end)
-    {start, finish}
+  defp locate_endpoints(grid) do
+    [{entry, _}] = Enum.filter(grid, fn {_, {_, type}} -> type == :start end)
+    [{exit, _}] = Enum.filter(grid, fn {_, {_, type}} -> type == :finish end)
+    {entry, exit}
   end
 
-  defp build_position_map(path) do
-    path
-    |> Enum.with_index()
-    |> Map.new()
+  defp index_positions(route) do
+    route
+    |> Stream.with_index()
+    |> Enum.into(%{})
   end
 
-  defp calculate_valid_shortcuts(path, position_map) do
-    path
-    |> Enum.flat_map(&find_shortcuts(&1, position_map))
-    |> Enum.filter(&(&1 >= 100))
+  defp find_valid_jumps(route, locations, possible_jumps) do
+    route
+    |> split_into_chunks()
+    |> Task.async_stream(fn parts ->
+      Enum.flat_map(parts, &scan_jumps(&1, locations, possible_jumps))
+    end)
+    # |> Stream.flat_map(&scan_jumps(&1, locations, possible_jumps))
+    |> merge_results_stream()
+    |> Stream.filter(&(&1 >= 100))
     |> Enum.count()
   end
 
-  defp find_shortcuts({row, col}, map) do
-    from_index = Map.get(map, {row, col})
+  defp scan_jumps({x, y}, locations, possible_jumps) do
+    current = Map.fetch!(locations, {x, y})
 
-    @shortcut_options
-    |> Enum.map(fn {o_row, o_col} ->
-      evaluate_shortcut(map, {row, col}, {o_row, o_col}, from_index)
-    end)
-    |> Enum.reject(&(&1 == nil || &1 == 0))
+    possible_jumps
+    |> Stream.map(&check_jump(locations, {x, y}, &1, current))
+    |> Stream.reject(&is_nil/1)
   end
 
-  defp evaluate_shortcut(map, {row, col}, {o_row, o_col}, from_index) do
-    to_index = Map.get(map, {row + o_row, col + o_col})
-
-    cond do
-      to_index == nil -> nil
-      to_index < from_index -> nil
-      true -> to_index - from_index - abs(o_row) - abs(o_col)
+  defp check_jump(locations, {x, y}, {dx, dy}, start_idx) do
+    case Map.get(locations, {x + dx, y + dy}) do
+      nil -> nil
+      end_idx when end_idx <= start_idx -> nil
+      end_idx -> end_idx - start_idx - abs(dx) - abs(dy)
     end
   end
 end
