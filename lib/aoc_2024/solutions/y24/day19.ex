@@ -9,7 +9,7 @@ defmodule Aoc2024.Solutions.Y24.Day19 do
   end
 
   def part_one({towels, patterns}) do
-    towels = Enum.sort_by(towels, &String.length/1, :desc)
+    # towels = Enum.sort_by(towels, &String.length/1, :desc)
 
     Task.async_stream(
       patterns,
