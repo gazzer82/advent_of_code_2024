@@ -119,7 +119,6 @@ defmodule Aoc2024.Solutions.Y24.Day20 do
     |> Task.async_stream(fn parts ->
       Enum.flat_map(parts, &scan_jumps(&1, locations, possible_jumps))
     end)
-    # |> Stream.flat_map(&scan_jumps(&1, locations, possible_jumps))
     |> merge_results_stream()
     |> Stream.filter(&(&1 >= 100))
     |> Enum.count()
