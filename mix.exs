@@ -31,7 +31,8 @@ defmodule Aoc2024.MixProject do
       {:arrays_aja, "~> 0.2.0"},
       {:memoize, "~> 1.4"},
       {:libgraph, "~> 0.16.0"},
-      {:benchee_html, "~> 1.0", only: :dev}
+      {:benchee_html, "~> 1.0", only: :dev},
+      {:heap, "~> 3.0"}
     ]
   end
 
