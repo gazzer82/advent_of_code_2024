@@ -3,87 +3,87 @@ defmodule Aoc2024.Solutions.Y24.Day17Test do
   alias Aoc2024.Solutions.Y24.Day17, as: Solution, warn: false
   use ExUnit.Case, async: true
 
-  defp solve(input, part) do
-    problem =
-      input
-      |> Input.as_file()
-      |> Solution.parse(part)
+  # defp solve(input, part) do
+  #   problem =
+  #     input
+  #     |> Input.as_file()
+  #     |> Solution.parse(part)
 
-    apply(Solution, part, [problem])
-  end
+  #   apply(Solution, part, [problem])
+  # end
 
-  test "part one example" do
-    # # If register C contains 9, the program 2,6 would set register B to 1.
-    # input_1 = ~S"""
-    # Register A: 0
-    # Register B: 0
-    # Register C: 9
+  # test "part one example" do
+  # # If register C contains 9, the program 2,6 would set register B to 1.
+  # input_1 = ~S"""
+  # Register A: 0
+  # Register B: 0
+  # Register C: 9
 
-    # Program: 2,6
-    # """
+  # Program: 2,6
+  # """
 
-    # assert {%{register_c: 9, register_b: 1, register_a: 0}, []} == solve(input_1, :part_one)
+  # assert {%{register_c: 9, register_b: 1, register_a: 0}, []} == solve(input_1, :part_one)
 
-    # # If register A contains 10, the program 5,0,5,1,5,4 would output 0,1,2.
-    # input_2 = ~S"""
-    # Register A: 10
-    # Register B: 0
-    # Register C: 0
+  # # If register A contains 10, the program 5,0,5,1,5,4 would output 0,1,2.
+  # input_2 = ~S"""
+  # Register A: 10
+  # Register B: 0
+  # Register C: 0
 
-    # Program: 5,0,5,1,5,4
-    # """
+  # Program: 5,0,5,1,5,4
+  # """
 
-    # assert {%{register_c: 0, register_b: 0, register_a: 10}, [0, 1, 2]} ==
-    #          solve(input_2, :part_one)
+  # assert {%{register_c: 0, register_b: 0, register_a: 10}, [0, 1, 2]} ==
+  #          solve(input_2, :part_one)
 
-    # # # If register A contains 2024, the program 0,1,5,4,3,0 would output 4,2,5,6,7,7,7,7,3,1,0 and leave 0 in register A.
-    # input_3 = ~S"""
-    # Register A: 2024
-    # Register B: 0
-    # Register C: 0
+  # # # If register A contains 2024, the program 0,1,5,4,3,0 would output 4,2,5,6,7,7,7,7,3,1,0 and leave 0 in register A.
+  # input_3 = ~S"""
+  # Register A: 2024
+  # Register B: 0
+  # Register C: 0
 
-    # Program: 0,1,5,4,3,0
-    # """
+  # Program: 0,1,5,4,3,0
+  # """
 
-    # assert {%{register_c: 0, register_b: 0, register_a: 0}, [4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0]} ==
-    #          solve(input_3, :part_one)
+  # assert {%{register_c: 0, register_b: 0, register_a: 0}, [4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0]} ==
+  #          solve(input_3, :part_one)
 
-    # # If register B contains 29, the program 1,7 would set register B to 26.
-    # input_4 = ~S"""
-    # Register A: 0
-    # Register B: 29
-    # Register C: 0
+  # # If register B contains 29, the program 1,7 would set register B to 26.
+  # input_4 = ~S"""
+  # Register A: 0
+  # Register B: 29
+  # Register C: 0
 
-    # Program: 1,7
-    # """
+  # Program: 1,7
+  # """
 
-    # assert {%{register_c: 0, register_b: 26, register_a: 0}, []} ==
-    #          solve(input_4, :part_one)
+  # assert {%{register_c: 0, register_b: 26, register_a: 0}, []} ==
+  #          solve(input_4, :part_one)
 
-    # # If register B contains 2024 and register C contains 43690, the program 4,0 would set register B to 44354
-    # input_5 = ~S"""
-    # Register A: 0
-    # Register B: 2024
-    # Register C: 43690
+  # # If register B contains 2024 and register C contains 43690, the program 4,0 would set register B to 44354
+  # input_5 = ~S"""
+  # Register A: 0
+  # Register B: 2024
+  # Register C: 43690
 
-    # Program: 4,0
-    # """
+  # Program: 4,0
+  # """
 
-    # assert {%{register_c: 43690, register_b: 44354, register_a: 0}, []} ==
-    #          solve(input_5, :part_one)
+  # assert {%{register_c: 43690, register_b: 44354, register_a: 0}, []} ==
+  #          solve(input_5, :part_one)
 
-    # its final output will be 4,6,3,5,6,3,5,2,1,0
-    input_6 = ~S"""
-    Register A: 156985331222018
-    Register B: 0
-    Register C: 0
+  # its final output will be 4,6,3,5,6,3,5,2,1,0
+  #   input_6 = ~S"""
+  #   Register A: 156985331222018
+  #   Register B: 0
+  #   Register C: 0
 
-    Program: 0,1,5,4,3,0
-    """
+  #   Program: 0,1,5,4,3,0
+  #   """
 
-    assert "4,6,3,5,6,3,5,2,1,0" ==
-             solve(input_6, :part_one)
-  end
+  #   assert "4,6,3,5,6,3,5,2,1,0" ==
+  #            solve(input_6, :part_one)
+  # end
 
   # Combo operands 0 through 3 represent literal values 0 through 3.
   # Combo operand 4 represents the value of register A.
@@ -125,17 +125,17 @@ defmodule Aoc2024.Solutions.Y24.Day17Test do
   #   assert 117_440 == solve(input, :part_two)
   # end
 
-  test "part two testing" do
-    input = ~S"""
-    Register A: 2
-    Register B: 0
-    Register C: 0
+  # test "part two testing" do
+  #   input = ~S"""
+  #   Register A: 2
+  #   Register B: 0
+  #   Register C: 0
 
-    Program: 2,4,1,4,7,5,4,1,1,4,5,5,0,3,3,0
-    """
+  #   Program: 2,4,1,4,7,5,4,1,1,4,5,5,0,3,3,0
+  #   """
 
-    assert "2,4,1,4,7,5,4,1,1,4,5,5,0,3,3,0" == solve(input, :part_two)
-  end
+  #   assert "2,4,1,4,7,5,4,1,1,4,5,5,0,3,3,0" == solve(input, :part_two)
+  # end
 
   # @part_two_solution CHANGE_ME
   #

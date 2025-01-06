@@ -32,7 +32,9 @@ defmodule Aoc2024.MixProject do
       {:memoize, "~> 1.4"},
       {:libgraph, "~> 0.16.0"},
       {:benchee_html, "~> 1.0", only: :dev},
-      {:heap, "~> 3.0"}
+      {:heap, "~> 3.0"},
+      {:graphvix, "~> 1.0.0"},
+      {:stream_data, "~> 1.0", only: [:dev, :test]}
     ]
   end
 
